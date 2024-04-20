@@ -1,0 +1,17 @@
+# Archivos y directorios específicos de NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# Archivos de clase
+*.class
+
+# Archivos de paquete
+*.jar
+*.war
+*.ear
+/target/
