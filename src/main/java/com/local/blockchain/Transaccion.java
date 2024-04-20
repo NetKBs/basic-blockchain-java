@@ -6,10 +6,10 @@ public class Transaccion {
     private String emisor; 
     private String receptor;
     private float cantidad;
-    private int firmaDigital;
+    private String firmaDigital;
     private String timestamp;
 
-    public Transaccion(String emisor, String receptor, float cantidad, int firmaDigital) {
+    public Transaccion(String emisor, String receptor, float cantidad, String firmaDigital) {
         this.emisor = emisor;
         this.receptor = receptor;
         this.cantidad = cantidad;
@@ -32,7 +32,7 @@ public class Transaccion {
         return cantidad;
     }
 
-    public int getFirmaDigital() {
+    public String getFirmaDigital() {
         return firmaDigital;
     }
 

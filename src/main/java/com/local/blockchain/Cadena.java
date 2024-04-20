@@ -1,13 +1,14 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.local.blockchain;
 
-/**
- *
- * @author avian
- */
+import java.util.ArrayList;
+
 public class Cadena {
+    private ArrayList<Bloque> cadenaDeBloques;
+
+    public Cadena() {
+    }
     
+    public void agregarBloque(Bloque bloque){
+        
+    }
 }
