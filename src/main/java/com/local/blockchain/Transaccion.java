@@ -1,7 +1,7 @@
 
 package com.local.blockchain;
 
-public class transcaccion {
+public class Transaccion {
     private int id;
     private String emisor; 
     private String receptor;
@@ -9,7 +9,7 @@ public class transcaccion {
     private int firmaDigital;
     private String timestamp;
 
-    public transcaccion(String emisor, String receptor, float cantidad, int firmaDigital) {
+    public Transaccion(String emisor, String receptor, float cantidad, int firmaDigital) {
         this.emisor = emisor;
         this.receptor = receptor;
         this.cantidad = cantidad;
