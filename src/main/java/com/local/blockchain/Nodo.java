@@ -18,7 +18,6 @@ public class Nodo {
     public Nodo(){
         this.id += 1;
         this.cartera = new Cartera();
-        this.cartera.setDireccion(id+"cartera");
     }
 
     public static int getId() {
