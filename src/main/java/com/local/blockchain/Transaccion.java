@@ -1,19 +1,22 @@
 
 package com.local.blockchain;
 
+import java.time.Instant;
+
 public class Transaccion {
     private int id;
     private String emisor; 
     private String receptor;
     private float cantidad;
-    private String firmaDigital;
-    private String timestamp;
+    private byte[] firmaDigital;
+    private Instant timestamp;
 
-    public Transaccion(String emisor, String receptor, float cantidad, String firmaDigital) {
+    public Transaccion(String emisor, String receptor, float cantidad, Instant timestamp, byte[] firma) {
         this.emisor = emisor;
         this.receptor = receptor;
         this.cantidad = cantidad;
-        this.firmaDigital = firmaDigital;
+        this.timestamp = timestamp;
+        this.firmaDigital = firma;
     }
 
     public int getId() {
@@ -32,11 +35,11 @@ public class Transaccion {
         return cantidad;
     }
 
-    public String getFirmaDigital() {
+    public byte[] getFirmaDigital() {
         return firmaDigital;
     }
 
-    public String getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
     

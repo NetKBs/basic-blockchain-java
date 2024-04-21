@@ -1,31 +1,62 @@
 
 package com.local.blockchain;
 
+import java.security.*;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class GestorTransacciones {
     
-    public boolean verificarFirma(String datosTransaccion, String firmaPrevia, String clavePub, String clavePriv) {
+    public boolean verificarFirma(PublicKey pk, String datos, byte[] firma) {
+     
+        // Crear un objeto Signature e inicializarlo para la verificación
+        Signature signature = null;
         
-        String firmaNueva = datosTransaccion + clavePriv + clavePub ;
-
-        if (firmaPrevia.equals(firmaNueva)) { // Firma digital real
-            return true;
+        try {
+            signature = Signature.getInstance("SHA256withECDSA");
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(GestorTransacciones.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return false;
+        try {
+            signature.initVerify(pk);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(GestorTransacciones.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        // Pasar los datos que fueron firmados al objeto Signature
+        byte[] bytes = datos.getBytes(StandardCharsets.UTF_8);
+        try {
+            signature.update(bytes);
+        } catch (SignatureException ex) {
+            Logger.getLogger(GestorTransacciones.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        // Verificar la firma
+        boolean isCorrect = false;
+        try {
+            isCorrect = signature.verify(firma);
+        } catch (SignatureException ex) {
+            Logger.getLogger(GestorTransacciones.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return isCorrect;
     }
     
-    public void hacerTransaccion(String receptorDir, Nodo emisor, float monto, String firma) {
+    public void procesarTransaccion(PublicKey pk, Transaccion transaccion) {
         
-        String datosTransaccion = receptorDir + emisor.getCartera().getDireccion() + monto;
-        Cartera cartera = emisor.getCartera();
+        String datos = transaccion.getEmisor() + transaccion.getReceptor() 
+                    + transaccion.getCantidad() + transaccion.getTimestamp();
         
-        if (verificarFirma(datosTransaccion, firma, cartera.getClavePublica(), cartera.getClavePrivada())) {
-            System.out.println("Bieeeen");
-            return;
+        boolean verificar = verificarFirma(pk, datos, transaccion.getFirmaDigital());
+        if (!verificar) {
+            System.out.println("Firma digital fraudulenta");
+        } else {
+            System.out.println("Firma digital comprobada");
         }
-        
-        System.out.println("Maaal");
-   
     }
+    
+    
     
     
 }
