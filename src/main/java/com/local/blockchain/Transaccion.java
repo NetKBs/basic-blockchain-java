@@ -4,7 +4,7 @@ package com.local.blockchain;
 import java.time.Instant;
 
 public class Transaccion {
-    private int id;
+    private static int id;
     private String emisor; 
     private String receptor;
     private float cantidad;
@@ -12,6 +12,7 @@ public class Transaccion {
     private Instant timestamp;
 
     public Transaccion(String emisor, String receptor, float cantidad, Instant timestamp, byte[] firma) {
+        this.id += 1;
         this.emisor = emisor;
         this.receptor = receptor;
         this.cantidad = cantidad;
