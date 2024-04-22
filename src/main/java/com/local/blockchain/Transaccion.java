@@ -44,6 +44,4 @@ public class Transaccion {
         return timestamp;
     }
     
-    
-    
 }
