@@ -44,28 +44,36 @@ public class Nodo {
         Signature signature = null;
         try {
             signature = Signature.getInstance("SHA256withECDSA");
+               signature.initSign(cartera.getClavePrivada());
+               
+                 byte[] bytes = datos.getBytes(StandardCharsets.UTF_8);
+                 
+               signature.update(bytes);
+               
+               byte[] digitalSignature = signature.sign();
+               
+            return digitalSignature;
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(GestorTransacciones.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         try {
-            signature.initSign(cartera.getClavePrivada());
+         
         } catch (InvalidKeyException ex) {
             Logger.getLogger(GestorTransacciones.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // Pasar los datos a firmar al objeto Signature
-        byte[] bytes = datos.getBytes(StandardCharsets.UTF_8);
+     
         try {
-            signature.update(bytes);
+           
         } catch (SignatureException ex) {
             Logger.getLogger(GestorTransacciones.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         try {
             // Firmar los datos
-            byte[] digitalSignature = signature.sign();
-            return digitalSignature;
+           
         } catch (SignatureException ex) {
             Logger.getLogger(GestorTransacciones.class.getName()).log(Level.SEVERE, null, ex);
         }
