@@ -31,7 +31,6 @@ public class Nodo {
         String datos = cartera.getDireccion() + receptor + monto + timestamp;
         byte[] firma = generarFirma(datos);
   
-        
         if (firma != null) {
             Transaccion transaccion = new Transaccion(cartera.getDireccion(), receptor, monto, timestamp, firma);
             gestor.procesarTransaccion(cartera.getClavePublica(), transaccion);
