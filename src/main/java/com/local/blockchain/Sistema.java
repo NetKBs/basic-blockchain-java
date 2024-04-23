@@ -11,19 +11,11 @@ public class Sistema {
         
     }
     
-    public void crearNodo() {
-        
+    public Nodo crearNodo() {
         Nodo nodoNuevo = new Nodo();
-        //redNodos.add(nodoNuevo);
-        
-        if (!redNodos.isEmpty()) {      
-            for (Nodo nodo : redNodos) {
-                nodo.agregarNodoConocido(nodoNuevo);
-            }
-        }
-        
-        nodoNuevo.setNodosConocidos(redNodos);    
-        System.out.println("Todo bien");
+        redNodos.add(nodoNuevo);
+        System.out.println("log: nodo creado | id " + nodoNuevo.getId() + " | cartera: " + nodoNuevo.getCartera().getDireccion());
+        return nodoNuevo;
     }
     
 }

@@ -15,7 +15,6 @@ public class Nodo {
     private static int id;
     private Cartera cartera;
     private Cadena cadena;
-    private ArrayList<Nodo> redNodosConocidos = new ArrayList<>();
 
     public Nodo(){
         this.id += 1;
@@ -63,13 +62,7 @@ public class Nodo {
         return null;
     }
     
-    public void agregarNodoConocido(Nodo nodo) {
-        redNodosConocidos.add(nodo);
-    }
-    
-    public void setNodosConocidos(ArrayList<Nodo> nodos) {
-        redNodosConocidos = nodos;
-    }
+
     
     public String getDireccionCartera() {
         return cartera.getDireccion();

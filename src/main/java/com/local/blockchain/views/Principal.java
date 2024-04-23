@@ -1,7 +1,11 @@
 
 package com.local.blockchain.views;
 
+import com.local.blockchain.Nodo;
 import com.local.blockchain.Sistema;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
 
 public class Principal extends javax.swing.JFrame {
 
@@ -40,25 +44,17 @@ public class Principal extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         background.setBackground(new java.awt.Color(255, 255, 255));
 
         jScrollPane1.setBackground(new java.awt.Color(204, 204, 255));
         jScrollPane1.setBorder(null);
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        jScrollPane1.setAutoscrolls(true);
 
         panelDeNodos.setBackground(new java.awt.Color(204, 204, 204));
-
-        javax.swing.GroupLayout panelDeNodosLayout = new javax.swing.GroupLayout(panelDeNodos);
-        panelDeNodos.setLayout(panelDeNodosLayout);
-        panelDeNodosLayout.setHorizontalGroup(
-            panelDeNodosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 463, Short.MAX_VALUE)
-        );
-        panelDeNodosLayout.setVerticalGroup(
-            panelDeNodosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 342, Short.MAX_VALUE)
-        );
-
+        panelDeNodos.setLayout(new java.awt.GridLayout(0, 6));
         jScrollPane1.setViewportView(panelDeNodos);
 
         jLabel1.setFont(new java.awt.Font("Noto Mono", 1, 24)); // NOI18N
@@ -80,16 +76,17 @@ public class Principal extends javax.swing.JFrame {
         backgroundLayout.setHorizontalGroup(
             backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(159, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addGap(145, 145, 145))
             .addGroup(backgroundLayout.createSequentialGroup()
-                .addGap(170, 170, 170)
-                .addComponent(crearNodo)
+                .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(backgroundLayout.createSequentialGroup()
+                        .addGap(170, 170, 170)
+                        .addComponent(crearNodo))
+                    .addGroup(backgroundLayout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         backgroundLayout.setVerticalGroup(
@@ -104,28 +101,20 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap(59, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(background, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(background, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        getContentPane().add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 480, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void crearNodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearNodoActionPerformed
-        sistema.crearNodo();
-        System.out.println("hola");
+        Nodo nodo = sistema.crearNodo();
+        JButton botonNodo = new JButton("nodo "+Nodo.getId());
+        panelDeNodos.add(botonNodo);
+        panelDeNodos.revalidate();
+        panelDeNodos.repaint();
     }//GEN-LAST:event_crearNodoActionPerformed
 
-    private void actualizarPantallaNodos() {
-        
-    }
+
     
     /**
      * @param args the command line arguments
