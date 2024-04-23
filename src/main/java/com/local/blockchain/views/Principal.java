@@ -12,7 +12,7 @@ public class Principal extends javax.swing.JFrame {
     Sistema sistema;
     
     public Principal() {
-        this.sistema = Sistema.getInstancia();
+        //this.sistema = Sistema.getInstancia();
         initComponents();
     }
 
@@ -107,11 +107,11 @@ public class Principal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void crearNodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearNodoActionPerformed
-        Nodo nodo = sistema.crearNodo();
+        /*Nodo nodo = sistema.crearNodo();
         JButton botonNodo = new JButton("nodo "+Nodo.getId());
         panelDeNodos.add(botonNodo);
         panelDeNodos.revalidate();
-        panelDeNodos.repaint();
+        panelDeNodos.repaint();*/
     }//GEN-LAST:event_crearNodoActionPerformed
 
 

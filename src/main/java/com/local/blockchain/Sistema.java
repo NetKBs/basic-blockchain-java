@@ -1,6 +1,7 @@
 
 package com.local.blockchain;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
 
 public class Sistema {
@@ -17,19 +18,46 @@ public class Sistema {
         return instancia;
     }
     
-    public Nodo crearNodo() {
-        Nodo nodoNuevo = new Nodo();
-        redNodos.add(nodoNuevo);
-        System.out.println("log: nodo creado | id " + nodoNuevo.getId() + " | cartera: " + nodoNuevo.getCartera().getDireccion());
-        return nodoNuevo;
+    public void propagarTransaccion(Transaccion transaccion, PublicKey pk) {
+        
+        boolean revisado = false;
+
+        for (Nodo nodo: redNodos) {
+            if (nodo instanceof Minero) {
+                revisado = true;
+                Minero minero = (Minero) nodo;
+                boolean respuesta = minero.verificarTransaccion(transaccion, pk);
+                if (respuesta) {
+                    System.out.println("Nodo " +  minero.getId() + " aprueba la transaccion");
+                } else {
+                   System.out.println("Nodo " +  minero.getId() + " desaprueba la transaccion");
+                }
+            } 
+        }
+        
+        if (!revisado) {
+            System.out.println("No existen mineros para validar las transacciones");
+        }
+        
+        // TODO: Luego de validarlo todo dar las transaccion como valida a todos los mineros
     }
     
-    public void propagarTransaccion() {
-        
+    // TODO: verificar si la instancia de nodo ya está en la red conectada
+    
+    public void conectarNodoARed(Nodo nodo) {
+        redNodos.add(nodo);
+        System.out.println("Nodo conectado");
     }
     
-    public void verificarTransaccion() {
-        
+    public void crearConectarNodoRed(boolean minero) {
+        if (minero) {
+            redNodos.add(new Minero());
+        } else {
+            redNodos.add(new Nodo());
+        }
+        System.out.println("Nodo creado y conectado");
     }
+    
+  
     
 }

@@ -27,26 +27,24 @@ public class Cartera {
     }
     
     public void generarClaves() {
-        // Usando algoritmo ECDSA
         KeyPairGenerator keyPairGenerator = null;
         
         try {
             keyPairGenerator = KeyPairGenerator.getInstance("EC"); // algoritmo EC
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(Cartera.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        ECGenParameterSpec ecSpec = new ECGenParameterSpec("secp256r1"); // Parámetros de la curva
-        
-        try {
+            ECGenParameterSpec ecSpec = new ECGenParameterSpec("secp256r1"); // Parámetros de la curva
             keyPairGenerator.initialize(ecSpec);
-        } catch (InvalidAlgorithmParameterException ex) {
-            Logger.getLogger(Cartera.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+            
+             KeyPair keyPair = keyPairGenerator.generateKeyPair();
         this.clavePrivada = keyPair.getPrivate();
         this.clavePublica = keyPair.getPublic();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Cartera.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (InvalidAlgorithmParameterException ex) {
+            Logger.getLogger(Cartera.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+       
        
     }
     
