@@ -10,37 +10,29 @@ import java.security.SignatureException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import java.time.Instant;
+import java.util.ArrayList;
 
-public class Minero extends Nodo{
- 
-    
-    public boolean verificarTransaccion(Transaccion transaccion, PublicKey pk) {
-        boolean veredicto;
-        
+public class Minero extends Nodo {
+
+    private ArrayList<Transaccion> transaccionesValidadas = new ArrayList<>();
+    private Integer transaccionesPorBloque = 1;
+    private Integer limiteIntentos = 1_000_000;
+
+    public boolean validarTransaccion(Transaccion transaccion) {
         String datos = transaccion.getEmisor() + transaccion.getReceptor() + 
                        transaccion.getCantidad() + transaccion.getTimestamp();
         
-        // firma
-        if (!verificarFirma(pk, datos, transaccion.getFirmaDigital())) {
+        if (!this.verificarFirma(transaccion.getClavePublica(), datos, transaccion.getFirmaDigital()) || 
+            !this.verificarFondos(transaccion.getEmisor())) {
             return false;
         }
-        
-        // saldo
-        // TODO: Verificar el saldo a través del blockchain
-        
-        /*if (!verificarSaldo(transaccion.getEmisor())) {
-           return false; 
-        }*/
-        
+
+        transaccionesValidadas.add(transaccion);
         return true;
     }
-    
-    public boolean verificarSaldo(String emisor) {
-        boolean isCorrect = false;
-        return isCorrect;
-    }
-    
-    public boolean verificarFirma(PublicKey pk, String datos, byte[] firma) {
+
+     public boolean verificarFirma(PublicKey pk, String datos, byte[] firma) {
      
         // Crear un objeto Signature e inicializarlo para la verificación
         Signature signature = null;
@@ -72,6 +64,41 @@ public class Minero extends Nodo{
             Logger.getLogger(GestorTransacciones.class.getName()).log(Level.SEVERE, null, ex);
         }
         return isCorrect;
+    }
+    
+
+    private Boolean verificarFondos(String emisorDir) {
+        return true;
+    }
+
+    public Bloque crearBloque() {
+        if (!deberiaCrearBloque()) {
+            return null;
+        }
+
+        Instant timestamp = Instant.now();
+        String hashAnterior = this.getHashAnterior();
+        Bloque nuevoBloque = new Bloque(0, timestamp.toString(), transaccionesValidadas, hashAnterior);
+
+        return nuevoBloque;
+
+    }
+
+    public void minarBloque(Bloque bloque) {
+        int i = 0;
+
+        while (i < limiteIntentos && !bloque.esValido()) {
+            bloque.crearHash(i);
+            i++;
+        }
+    }
+
+    public Boolean deberiaCrearBloque() {
+        return transaccionesValidadas.size() >= transaccionesPorBloque;
+    }
+
+    public String getHashAnterior() {
+        return null;
     }
 
 }

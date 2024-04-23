@@ -4,12 +4,15 @@ package com.local.blockchain;
 import com.local.blockchain.views.Principal;
 import com.local.exepciones.FirmaException;
 
+import com.local.exepciones.FirmaException;
+import java.security.PublicKey;
+import java.util.AbstractMap;
 
 public class Blockchain {
     
 
     public static void main(String[] args) throws FirmaException {
-        
+
        //Principal viewPrincipal = new Principal();
        //viewPrincipal.setVisible(true);
        Sistema sistema = Sistema.getInstancia();
@@ -29,7 +32,7 @@ public class Blockchain {
        minero3.conectarseRedP2P();
        
        // Procesos en la red
-       nodo1.crearTransaccion("direccion", 10);
-     
+       sistema.propagarTransaccion(nodo1.crearTransaccion("direccion", 10));
+
     }
 }

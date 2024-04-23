@@ -1,6 +1,7 @@
 
 package com.local.blockchain;
 
+import java.security.PublicKey;
 import java.time.Instant;
 
 public class Transaccion {
@@ -10,14 +11,16 @@ public class Transaccion {
     private float cantidad;
     private byte[] firmaDigital;
     private Instant timestamp;
+    private PublicKey pk;
 
-    public Transaccion(String emisor, String receptor, float cantidad, Instant timestamp, byte[] firma) {
+    public Transaccion(String emisor, String receptor, float cantidad, Instant timestamp, byte[] firma, PublicKey pk) {
         this.id += 1;
         this.emisor = emisor;
         this.receptor = receptor;
         this.cantidad = cantidad;
         this.timestamp = timestamp;
         this.firmaDigital = firma;
+        this.pk = pk;
     }
 
     public int getId() {
@@ -42,6 +45,10 @@ public class Transaccion {
 
     public Instant getTimestamp() {
         return timestamp;
+    }
+    
+    public PublicKey getClavePublica() {
+        return pk;
     }
     
 }

@@ -1,13 +1,12 @@
-
 package com.local.blockchain;
 
 import java.math.BigInteger;
 
 public class Utils {
-    
-    private static final String ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
-    
+    private static final String ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+    private static final String HEXES = "0123456789ABCDEF";
+
     public static String encodeToBase58(byte[] input) {
         BigInteger bi = new BigInteger(1, input);
         StringBuilder sb = new StringBuilder();
@@ -21,5 +20,12 @@ public class Utils {
         return sb.reverse().toString();
     }
 
-    
+    public static String encodeToHex(byte[] input) {
+        final StringBuilder hex = new StringBuilder(2 * input.length);
+        for (final byte b : input) {
+            hex.append(HEXES.charAt((b & 0xF0) >> 4)).append(HEXES.charAt((b & 0x0F)));
+        }
+        return hex.toString();
+    }
+
 }

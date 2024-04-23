@@ -5,6 +5,7 @@ import java.security.Signature;
 import java.time.Instant;
 import com.local.exepciones.FirmaException;
 import java.security.PublicKey;
+import java.util.AbstractMap;
 
 public class Nodo {
     private static int id;
@@ -26,7 +27,7 @@ public class Nodo {
         redP2P.conectarNodoARed(this);
     }
     
-    public void crearTransaccion(String receptor, float monto) throws FirmaException {
+    public Transaccion crearTransaccion(String receptor, float monto) throws FirmaException {
         if (redP2P == null) {
             System.out.print("Nodo no tiene acceso a la red");
             
@@ -36,11 +37,15 @@ public class Nodo {
 
             String datos = direccion + receptor + monto + timestamp;
             byte[] firma = this.generarFirma(datos);
+            
+            
+            //Transaccion transaccion = new Transaccion(direccion, receptor, monto, timestamp, firma);
+            // redP2P.propagarTransaccion(transaccion, cartera.getClavePublica());
 
-            Transaccion transaccion = new Transaccion(direccion, receptor, monto, timestamp, firma);
-            redP2P.propagarTransaccion(transaccion, cartera.getClavePublica());
+            return new Transaccion(direccion, receptor, monto, timestamp, firma, cartera.getClavePublica());
+
         }
-  
+        return null;
     }
 
     private byte[] generarFirma(String datos) throws FirmaException {

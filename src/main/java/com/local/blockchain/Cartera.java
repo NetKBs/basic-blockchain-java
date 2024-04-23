@@ -42,10 +42,6 @@ public class Cartera {
         }catch (InvalidAlgorithmParameterException ex) {
             Logger.getLogger(Cartera.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-       
-       
     }
     
     public void generarDireccion() throws Exception {

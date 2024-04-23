@@ -18,7 +18,7 @@ public class Sistema {
         return instancia;
     }
     
-    public void propagarTransaccion(Transaccion transaccion, PublicKey pk) {
+    public void propagarTransaccion(Transaccion transaccion) {
         
         boolean revisado = false;
 
@@ -26,7 +26,7 @@ public class Sistema {
             if (nodo instanceof Minero) {
                 revisado = true;
                 Minero minero = (Minero) nodo;
-                boolean respuesta = minero.verificarTransaccion(transaccion, pk);
+                boolean respuesta = minero.validarTransaccion(transaccion);
                 if (respuesta) {
                     System.out.println("Nodo " +  minero.getId() + " aprueba la transaccion");
                 } else {
