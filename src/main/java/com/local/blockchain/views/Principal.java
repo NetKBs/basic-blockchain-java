@@ -12,7 +12,7 @@ public class Principal extends javax.swing.JFrame {
     Sistema sistema;
     
     public Principal() {
-        this.sistema = new Sistema();
+        this.sistema = Sistema.getInstancia();
         initComponents();
     }
 

@@ -5,10 +5,16 @@ import java.util.ArrayList;
 
 public class Sistema {
     
+    private static Sistema instancia;
     private ArrayList<Nodo> redNodos = new ArrayList<>();
     
-    public Sistema(){
-        
+    private Sistema(){}
+    
+    public static Sistema getInstancia() {
+        if (instancia == null) {
+            instancia = new Sistema();
+        }
+        return instancia;
     }
     
     public Nodo crearNodo() {
@@ -16,6 +22,14 @@ public class Sistema {
         redNodos.add(nodoNuevo);
         System.out.println("log: nodo creado | id " + nodoNuevo.getId() + " | cartera: " + nodoNuevo.getCartera().getDireccion());
         return nodoNuevo;
+    }
+    
+    public void propagarTransaccion() {
+        
+    }
+    
+    public void verificarTransaccion() {
+        
     }
     
 }
