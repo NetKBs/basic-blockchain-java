@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,6 +15,7 @@ public class Nodo {
     private static int id;
     private Cartera cartera;
     private Cadena cadena;
+    private ArrayList<Nodo> redNodosConocidos = new ArrayList<>();
 
     public Nodo(){
         this.id += 1;
@@ -59,6 +61,14 @@ public class Nodo {
             Logger.getLogger(GestorTransacciones.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+    
+    public void agregarNodoConocido(Nodo nodo) {
+        redNodosConocidos.add(nodo);
+    }
+    
+    public void setNodosConocidos(ArrayList<Nodo> nodos) {
+        redNodosConocidos = nodos;
     }
     
     public String getDireccionCartera() {

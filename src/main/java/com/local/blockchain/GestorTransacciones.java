@@ -42,7 +42,7 @@ public class GestorTransacciones {
         }
         return isCorrect;
     }
-    
+
     public void procesarTransaccion(PublicKey pk, Transaccion transaccion) {
         
         String datos = transaccion.getEmisor() + transaccion.getReceptor() 
