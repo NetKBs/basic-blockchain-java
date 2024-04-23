@@ -34,7 +34,9 @@ public class Nodo {
   
         if (firma != null) {
             Transaccion transaccion = new Transaccion(cartera.getDireccion(), receptor, monto, timestamp, firma);
-            gestor.procesarTransaccion(cartera.getClavePublica(), transaccion);
+            
+            
+            //gestor.procesarTransaccion(cartera.getClavePublica(), transaccion);
             
         }
         return;
