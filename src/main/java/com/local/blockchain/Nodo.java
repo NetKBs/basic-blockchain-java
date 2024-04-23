@@ -26,9 +26,7 @@ public class Nodo {
         String datos = direccion + receptor + monto + timestamp;
         byte[] firma = this.generarFirma(datos);
 
-        Transaccion transaccion = new Transaccion(direccion, receptor, monto, timestamp, firma);
-
-        return transaccion;
+        return new Transaccion(direccion, receptor, monto, timestamp, firma);
     }
 
     private byte[] generarFirma(String datos) throws FirmaException {
