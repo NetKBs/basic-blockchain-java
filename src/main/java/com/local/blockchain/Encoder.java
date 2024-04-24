@@ -2,10 +2,13 @@ package com.local.blockchain;
 
 import java.math.BigInteger;
 
-public class Utils {
+public final class Encoder {
 
     private static final String ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
     private static final String HEXES = "0123456789ABCDEF";
+
+    private Encoder() {
+    }
 
     public static String encodeToBase58(byte[] input) {
         BigInteger bi = new BigInteger(1, input);

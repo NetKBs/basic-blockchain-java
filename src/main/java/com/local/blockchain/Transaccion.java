@@ -1,25 +1,26 @@
-
 package com.local.blockchain;
 
+import com.local.exepciones.FirmaException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Signature;
 import java.time.Instant;
 
 public class Transaccion {
     private static int id;
-    private String emisor; 
+    private String emisor;
     private String receptor;
     private float cantidad;
     private byte[] firmaDigital;
     private Instant timestamp;
     private PublicKey pk;
 
-    public Transaccion(String emisor, String receptor, float cantidad, Instant timestamp, byte[] firma, PublicKey pk) {
+    public Transaccion(String emisor, String receptor, float cantidad, Instant timestamp, PublicKey pk) {
         this.id += 1;
         this.emisor = emisor;
         this.receptor = receptor;
         this.cantidad = cantidad;
         this.timestamp = timestamp;
-        this.firmaDigital = firma;
         this.pk = pk;
     }
 
@@ -46,9 +47,16 @@ public class Transaccion {
     public Instant getTimestamp() {
         return timestamp;
     }
-    
+
     public PublicKey getClavePublica() {
         return pk;
     }
     
+    public void firmar(byte[] firma){
+        this.firmaDigital = firma;
+    }
+    
+    public Boolean esValida(){
+        return (firmaDigital != null);
+    }
 }

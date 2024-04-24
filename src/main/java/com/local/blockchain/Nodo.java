@@ -1,13 +1,12 @@
 package com.local.blockchain;
 
-import java.nio.charset.StandardCharsets;
-import java.security.Signature;
 import java.time.Instant;
 import com.local.exepciones.FirmaException;
 import java.security.PublicKey;
-import java.util.AbstractMap;
+import java.security.PrivateKey;
 
 public class Nodo {
+
     private static int id;
     private Cartera cartera;
     private Cadena cadena;
@@ -21,47 +20,23 @@ public class Nodo {
     public static int getId() {
         return id;
     }
-    
+
     public void conectarseRedP2P() {
         this.redP2P = Sistema.getInstancia();
         redP2P.conectarNodoARed(this);
     }
-    
+
     public Transaccion crearTransaccion(String receptor, float monto) throws FirmaException {
-        if (redP2P == null) {
-            System.out.print("Nodo no tiene acceso a la red");
-            
-        } else {
-            String direccion = cartera.getDireccion();
-            Instant timestamp = Instant.now();
+        String direccion = cartera.getDireccion();
+        PublicKey clavePublica = cartera.getClavePublica();
+        PrivateKey clavePrivada = cartera.getClavePrivada();
+         Instant timestamp = Instant.now();
 
-            String datos = direccion + receptor + monto + timestamp;
-            byte[] firma = this.generarFirma(datos);
-            
-            
-            //Transaccion transaccion = new Transaccion(direccion, receptor, monto, timestamp, firma);
-            // redP2P.propagarTransaccion(transaccion, cartera.getClavePublica());
+        Transaccion nuevaTransaccion = new Transaccion(direccion, receptor, monto, timestamp, clavePublica);
+        byte[] firma = GestorFirmas.generarFirma(clavePrivada, nuevaTransaccion);
+        nuevaTransaccion.firmar(firma);
 
-            return new Transaccion(direccion, receptor, monto, timestamp, firma, cartera.getClavePublica());
-
-        }
-        return null;
-    }
-
-    private byte[] generarFirma(String datos) throws FirmaException {
-        Signature signature = null;
-
-        try {
-            signature = Signature.getInstance("SHA256withECDSA");
-            signature.initSign(cartera.getClavePrivada());
-            byte[] bytes = datos.getBytes(StandardCharsets.UTF_8);
-            signature.update(bytes);
-            byte[] digitalSignature = signature.sign();
-
-            return digitalSignature;
-        } catch (Exception ex) {
-            throw new FirmaException("No se pudo generar la firma");
-        }
+        return nuevaTransaccion;
     }
 
     public String getDireccionCartera() {

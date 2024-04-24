@@ -20,13 +20,13 @@ public class Bloque {
     }
     
     public void crearHash(int nonce) {
-        String datos = indice + timestamp + transacciones + hashAnterior + nonce;
-        byte[] bytes = datos.getBytes();
-        byte[] hash = DigestUtils.sha256(bytes);
-        Utils encoder = new Utils();
-        
-        this.hash = encoder.encodeToHex(hash);
         this.nonce = nonce;
+        
+        byte[] bytes = Serializer.serializarBloque(this);
+        byte[] byteHash = DigestUtils.sha256(bytes);
+        
+        this.hash = Encoder.encodeToHex(byteHash);
+      
     }
     
     public int getIndice() {
@@ -58,6 +58,6 @@ public class Bloque {
             return false;
         }
         
-        return hash.startsWith("0000");
+        return hash.startsWith("00000");
     }
 }
