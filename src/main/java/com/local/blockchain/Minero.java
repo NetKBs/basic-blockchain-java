@@ -4,10 +4,13 @@ import java.time.Instant;
 import java.util.ArrayList;
 
 public class Minero extends Nodo {
-
     private final ArrayList<Transaccion> transaccionesValidadas = new ArrayList<>();
     private final Integer transaccionesPorBloque = 1;
 
+    public Minero (){
+        super();
+    }
+    
     public Boolean validarTransaccion(Transaccion transaccion) {
         if (!GestorFirmas.verificarFirma(transaccion)
                 || !this.verificarFondos(transaccion)) {
@@ -29,7 +32,8 @@ public class Minero extends Nodo {
 
         Instant timestamp = Instant.now();
         String hashAnterior = this.getHashAnterior();
-        Bloque nuevoBloque = new Bloque(0, timestamp.toString(), transaccionesValidadas, hashAnterior);
+        Integer indiceAnteror = this.getIndiceAnterior();
+        Bloque nuevoBloque = new Bloque(indiceAnteror  + 1, timestamp.toString(), transaccionesValidadas, hashAnterior);
 
         return nuevoBloque;
     }
@@ -48,7 +52,17 @@ public class Minero extends Nodo {
     }
 
     public String getHashAnterior() {
-        return null;
+        return cadena.obtenerHeadMayor();
+    }
+    
+    public Integer getIndiceAnterior(){
+        String headMayor = getHashAnterior();
+        
+        if(headMayor == null){
+            return -1;
+        }
+        
+        return cadena.obtenerBloque(headMayor).getIndice();
     }
 
 }
