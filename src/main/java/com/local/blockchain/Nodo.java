@@ -30,7 +30,7 @@ public class Nodo {
         String direccion = cartera.getDireccion();
         PublicKey clavePublica = cartera.getClavePublica();
         PrivateKey clavePrivada = cartera.getClavePrivada();
-         Instant timestamp = Instant.now();
+        Instant timestamp = Instant.now();
 
         Transaccion nuevaTransaccion = new Transaccion(direccion, receptor, monto, timestamp, clavePublica);
         byte[] firma = GestorFirmas.generarFirma(clavePrivada, nuevaTransaccion);

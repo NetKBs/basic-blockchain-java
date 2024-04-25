@@ -17,8 +17,11 @@ public class Blockchain {
        //viewPrincipal.setVisible(true);
        Sistema sistema = Sistema.getInstancia();
        
+       Nodo nodo = new Nodo();
+       System.out.println(nodo.getDireccionCartera());
+       
        // Nodos 
-       Nodo nodo1 = new Nodo();
+       /*Nodo nodo1 = new Nodo();
        nodo1.conectarseRedP2P();
        
        // Nodos Mineros
@@ -32,7 +35,7 @@ public class Blockchain {
        minero3.conectarseRedP2P();
        
        // Procesos en la red
-       sistema.propagarTransaccion(nodo1.crearTransaccion("direccion", 10));
+       sistema.propagarTransaccion(nodo1.crearTransaccion("direccion", 10));*/
 
     }
 }
