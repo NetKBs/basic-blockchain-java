@@ -7,14 +7,15 @@ import java.security.PrivateKey;
 
 public class Nodo {
 
-    private static int id;
-    private Cartera cartera;
-    private Cadena cadena;
+    protected static int id;
+    protected Cartera cartera;
+    protected Cadena cadena;
     private Sistema redP2P = null; // acceso a la red de nodos
 
     public Nodo() {
         this.id += 1;
         this.cartera = new Cartera();
+        this.cadena = new Cadena();
     }
 
     public static int getId() {
@@ -37,6 +38,10 @@ public class Nodo {
         nuevaTransaccion.firmar(firma);
 
         return nuevaTransaccion;
+    }
+    
+    public void agregarBloque(Bloque bloque){
+        
     }
 
     public String getDireccionCartera() {
