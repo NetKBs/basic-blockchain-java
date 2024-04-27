@@ -27,7 +27,7 @@ public class ClienteView extends javax.swing.JFrame {
 
         buscarData();
     }
-    
+
     public void detenerTimer() {
         if (timer != null) {
             timer.cancel();
@@ -84,11 +84,6 @@ public class ClienteView extends javax.swing.JFrame {
         cartera.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         cartera.setText("Eg13Hr8Rqd17o4QggkwhRA39NNE9KGcKznSkc2X1SnFu");
         cartera.setBorder(null);
-        cartera.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                carteraActionPerformed(evt);
-            }
-        });
 
         fondos.setBackground(new java.awt.Color(250, 250, 250));
         fondos.setFont(new java.awt.Font("sansserif", 0, 18)); // NOI18N
@@ -235,35 +230,29 @@ public class ClienteView extends javax.swing.JFrame {
         cadenaV.setVisible(true);
     }//GEN-LAST:event_btnConsultarCadenaActionPerformed
 
-    private void carteraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_carteraActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_carteraActionPerformed
-
     private void btnTransaccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransaccionActionPerformed
 
         String receptor = destinatario.getText();
         String cantidad = monto.getText();
 
-        if (!receptor.isEmpty() && !cantidad.isEmpty()) {
+        if (receptor.isEmpty() || cantidad.isEmpty()) {
+            mensajeEmergente("Llene todos los campos");
+            return;
+        }
+        try {
+            float cantidadInt = Float.parseFloat(cantidad);
+            String msg = Sistema.getInstancia().propagarTransaccion(nodo.crearTransaccion(receptor, cantidadInt));
 
-            try {
-                float cantidadInt = Float.parseFloat(cantidad);
-                String msg = Sistema.getInstancia().propagarTransaccion(nodo.crearTransaccion(receptor, cantidadInt));
-                if (!msg.isEmpty()) {
-                    mensajeEmergente(msg);
-                } else {
-                    mensajeEmergente("Transacción verificada y en proceso");
-                }
-
-            } catch (NumberFormatException ex) {
-                mensajeEmergente("El monto debe ser numérico");
-            } catch (FirmaException ex) {
+            if (msg.isEmpty()) {
+                mensajeEmergente("Transacción verificada y en proceso");
+                return;
             }
 
-        } else {
-            mensajeEmergente("Llene todos los campos");
+            mensajeEmergente(msg);
+        } catch (NumberFormatException ex) {
+            mensajeEmergente("El monto debe ser numérico");
+        } catch (FirmaException ex) {
         }
-
     }//GEN-LAST:event_btnTransaccionActionPerformed
 
     private void buscarData() {
@@ -278,54 +267,43 @@ public class ClienteView extends javax.swing.JFrame {
                 Bloque bloque = nodo.getCadena().obtenerBloque(head);
                 transPropias.clear();
                 transAmi.clear();
-                
-                if (bloque != null) {
-                    while (true) {
-                        
-                        for (Transaccion transaccion : bloque.getTransacciones()) {
-                            if (carteraDir.equals(transaccion.getEmisor())) {
-                                transPropias.add(transaccion);
-                            } else if (carteraDir.equals(transaccion.getReceptor())){
-                                transAmi.add(transaccion);
-                            }
-                        }
 
-                        bloque = nodo.getCadena().obtenerBloque(bloque.getHashAnterior());
-                        if (bloque == null) {
-                            break;
+                while (bloque != null) {
+                    for (Transaccion transaccion : bloque.getTransacciones()) {
+                        if (carteraDir.equals(transaccion.getEmisor())) {
+                            transPropias.add(transaccion);
+                        } else if (carteraDir.equals(transaccion.getReceptor())) {
+                            transAmi.add(transaccion);
                         }
                     }
-                    
-                    if (!transPropias.isEmpty() || !transAmi.isEmpty()) {
-                        mostrarData(transPropias, transAmi);
-                    }
+
+                    bloque = nodo.getCadena().obtenerBloque(bloque.getHashAnterior());
+                }
+
+                if (!transPropias.isEmpty() || !transAmi.isEmpty()) {
+                    mostrarData(nodo.getFondos(), transPropias, transAmi);
                 }
 
                 System.out.println("Buscando data cliente: " + nodo.getId());
-
             }
         };
         timer.scheduleAtFixedRate(task, 0, 5000);
     }
 
-    private void mostrarData(ArrayList<Transaccion> transPropias, ArrayList<Transaccion> transAmi) {
+    private void mostrarData(float fondosCantidad, ArrayList<Transaccion> transPropias, ArrayList<Transaccion> transAmi) {
         PanelHistorialTrans.removeAll();
-        float fondosCantidad = 0;
-        
+
         for (Transaccion trans : transPropias) {
             JLabel labelTrans = new JLabel(trans.getCantidad() + "$ -> " + trans.getReceptor());
             PanelHistorialTrans.add(labelTrans);
-            fondosCantidad -= trans.getCantidad();
         }
-        
-        
+
         for (Transaccion trans : transAmi) {
             JLabel labelTrans = new JLabel(trans.getCantidad() + "$ <- " + trans.getReceptor());
             PanelHistorialTrans.add(labelTrans);
-            fondosCantidad += trans.getCantidad();
         }
 
-        fondos.setText(""+fondosCantidad);
+        fondos.setText("" + fondosCantidad);
         fondos.revalidate();
         fondos.repaint();
         PanelHistorialTrans.revalidate();

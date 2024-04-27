@@ -92,21 +92,21 @@ public class CadenaView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     public void cargarBloques() {
-        
-        
         String head = cadena.obtenerHeadMayor();
         Bloque bloque = cadena.obtenerBloque(head);
-        
-        while(true) {
+
+        while (bloque != null) {
             JPanel panel = new JPanel();
             panel.setBackground(Color.GRAY);
             panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); 
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
             JLabel hashAnteriorLabel = new JLabel("Hash Anterior: " + bloque.getHashAnterior());
             panel.add(hashAnteriorLabel);
 
             JLabel transaccionesLabel = new JLabel("Transacciones:");
             panel.add(transaccionesLabel);
+
+            panel.add(new JLabel("---"));
 
             for (Transaccion transaccion : bloque.getTransacciones()) {
                 JLabel idLabel = new JLabel("ID: " + transaccion.getId());
@@ -120,9 +120,14 @@ public class CadenaView extends javax.swing.JFrame {
 
                 JLabel montoLabel = new JLabel("Monto: " + transaccion.getCantidad());
                 panel.add(montoLabel);
-                
+
             }
-            panel.add(new JLabel("---")); 
+
+            panel.add(new JLabel("---"));
+
+            JLabel mineroLabel = new JLabel("Minero: " + bloque.getMinero());
+            panel.add(mineroLabel);
+
             JLabel nonceLabel = new JLabel("Nonce: " + bloque.getNonce());
             panel.add(nonceLabel);
 
@@ -131,12 +136,8 @@ public class CadenaView extends javax.swing.JFrame {
 
             panel.add(new JLabel("")); // Espacio en blanco entre bloques
             panelBlockchain.add(panel);
-            
+
             bloque = cadena.obtenerBloque(bloque.getHashAnterior());
-            if (bloque == null) {
-                break;
-            }
-            
         }
 
     }

@@ -8,6 +8,7 @@ public class Bloque {
     private int indice;
     private String timestamp;
     private ArrayList<Transaccion> transacciones;
+    private String minero;
     private String hashAnterior;
     private String hash = null;
     private Integer nonce = null;
@@ -19,8 +20,9 @@ public class Bloque {
         this.hashAnterior = hashAnterior;
     }
     
-    public void crearHash(int nonce) {
+    public void crearHash(int nonce, String minero) {
         this.nonce = nonce;
+        this.minero = minero;
         
         byte[] bytes = Serializer.serializarBloque(this);
         byte[] byteHash = DigestUtils.sha256(bytes);
@@ -51,6 +53,10 @@ public class Bloque {
 
     public Integer getNonce() {
         return nonce;
+    }
+    
+    public String getMinero(){
+        return minero;
     }
     
     public Boolean esValido(){

@@ -8,7 +8,7 @@ public final class Serializer {
     }
 
     public static byte[] serializarBloque(Bloque bloque) {
-        String datos = bloque.getIndice() + bloque.getTimestamp() + bloque.getTransacciones() + bloque.getHashAnterior() + bloque.getNonce();
+        String datos = bloque.getIndice() + bloque.getTimestamp() + bloque.getTransacciones() + bloque.getHashAnterior() + bloque.getNonce() + bloque.getMinero();
         return datos.getBytes();
     }
     

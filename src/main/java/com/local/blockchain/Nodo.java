@@ -16,9 +16,7 @@ public class Nodo {
 
     public Nodo() {
         this.cartera = new Cartera();
-        this.cadena = new Cadena();
-        
-     
+        this.cadena = new Cadena();     
     }
 
     public int getId() {
@@ -63,4 +61,23 @@ public class Nodo {
         return cartera;
     }
     
+    public float getFondos(){
+        Bloque bloque = cadena.obtenerBloque( cadena.obtenerHeadMayor());
+        String direccion = cartera.getDireccion();
+        float saldo = 0;
+        
+        while (bloque != null) {
+            for (Transaccion t : bloque.getTransacciones()) {
+                if (direccion.equals(t.getEmisor())) {
+                    saldo -= t.getCantidad();
+                } else if (direccion.equals(t.getReceptor())) {
+                    saldo += t.getCantidad();
+                }
+            }
+
+            bloque = cadena.obtenerBloque(bloque.getHashAnterior());
+        }
+        
+        return saldo;
+    }
 }

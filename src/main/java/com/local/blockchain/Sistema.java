@@ -30,11 +30,8 @@ public class Sistema {
     }
     
     public String propagarTransaccion(Transaccion transaccion) {
-        
         boolean revisado = false;
         
-        
-
         for (Nodo nodo: redNodos) {
             if (nodo instanceof Minero) {
                 revisado = true;
