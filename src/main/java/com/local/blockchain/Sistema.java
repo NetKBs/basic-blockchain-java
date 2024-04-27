@@ -17,13 +17,16 @@ public class Sistema {
         return instancia;
     }
     
-    public void propagarBloqueYaMinado() {
+    public void propagarBloqueYaMinado(Bloque bloque) {
+ 
         for (Nodo nodo: redNodos) {
+            
             if (nodo instanceof Minero) {
                 Minero minero = (Minero) nodo;
                 minero.bloqueYaMinado();
-            }
-        }
+            }       
+            nodo.cadena.agregarBloque(bloque);
+        }   
     }
     
     public String propagarTransaccion(Transaccion transaccion) {
@@ -39,10 +42,8 @@ public class Sistema {
                 String respuesta = minero.validarTransaccion(transaccion);
                 
                 // TODO: VERIFICAR FONDOS
-                if (respuesta.isEmpty()) {
-                    System.out.println("Nodo Minero #" +  minero.getId() + " aprueba la transaccion");
-                } else {
-                   return "Nodo Minero #" +  minero.getId() + " desaprueba la transaccion:\n"+respuesta;
+                if (!respuesta.isEmpty()) {
+                    return "Nodo Minero #" +  minero.getId() + " desaprueba la transaccion:\n"+respuesta;
                 }
             } 
         }
@@ -60,7 +61,6 @@ public class Sistema {
     
     public void conectarNodoARed(Nodo nodo) {
         redNodos.add(nodo);
-        System.out.println("Nodo conectado");
     }
     
     public Nodo crearConectarNodoRed(boolean minero) {
@@ -73,7 +73,6 @@ public class Sistema {
         
         nodo.setId(generarNuevoIdUnico());
         redNodos.add(nodo);
-        System.out.println("Nodo " + nodo.getId() + " creado y conectado");
         return nodo;
     }
     

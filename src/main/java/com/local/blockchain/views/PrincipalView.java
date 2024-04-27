@@ -14,6 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -193,7 +194,6 @@ public class PrincipalView extends javax.swing.JFrame {
             
             if (matcher.find()) {
                 int nodeId = Integer.parseInt(matcher.group(1)); // Obtener el número de ID del nodo
-                System.out.println(nodeId);
                 cargarNodoVentana(nodeId);
             }
       
@@ -206,15 +206,32 @@ public class PrincipalView extends javax.swing.JFrame {
     }
     
 private void cargarNodoVentana(int id) {
-    Nodo nodo = sistema.getNodoById(id);
+     Nodo nodo = sistema.getNodoById(id);
+    
+    JFrame ventana; // Declarar la variable de la ventana aquí para poder acceder al WindowListener
     
     if (nodo instanceof Minero) {
         MineroView minero = new MineroView(nodo);
+        ventana = minero; 
         minero.setVisible(true);
     } else {
         ClienteView cliente = new ClienteView(nodo);
+        ventana = cliente; 
         cliente.setVisible(true);
     }
+    
+    // Agregar el WindowListener para detener el Timer al cerrar la ventana
+    ventana.addWindowListener(new WindowAdapter() {
+        @Override
+        public void windowClosing(WindowEvent e) {
+            Object source = e.getSource();
+            if (source instanceof ClienteView) {
+                ((ClienteView) source).detenerTimer();
+            } else {
+                ((MineroView) source).detenerTimer();
+            }
+        }
+    });
     
 }
 

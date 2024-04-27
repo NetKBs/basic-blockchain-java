@@ -7,7 +7,8 @@ import java.security.Signature;
 import java.time.Instant;
 
 public class Transaccion {
-    private static int id;
+    private static int idContador;
+    private int id;
     private String emisor;
     private String receptor;
     private float cantidad;
@@ -16,7 +17,7 @@ public class Transaccion {
     private PublicKey pk;
 
     public Transaccion(String emisor, String receptor, float cantidad, Instant timestamp, PublicKey pk) {
-        this.id += 1;
+        this.id = ++idContador;
         this.emisor = emisor;
         this.receptor = receptor;
         this.cantidad = cantidad;

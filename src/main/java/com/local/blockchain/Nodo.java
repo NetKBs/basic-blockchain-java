@@ -4,6 +4,8 @@ import java.time.Instant;
 import com.local.exepciones.FirmaException;
 import java.security.PublicKey;
 import java.security.PrivateKey;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Nodo {
 
@@ -15,6 +17,8 @@ public class Nodo {
     public Nodo() {
         this.cartera = new Cartera();
         this.cadena = new Cadena();
+        
+     
     }
 
     public int getId() {
@@ -44,7 +48,7 @@ public class Nodo {
     }
     
     public void agregarBloque(Bloque bloque){
-        
+        this.cadena.agregarBloque(bloque);
     }
 
     public String getDireccionCartera() {
@@ -58,4 +62,5 @@ public class Nodo {
     public Cartera getCartera() {
         return cartera;
     }
+    
 }

@@ -1,25 +1,37 @@
-
 package com.local.blockchain.views;
 
+import com.local.blockchain.Bloque;
 import com.local.blockchain.Nodo;
 import com.local.blockchain.Sistema;
+import com.local.blockchain.Transaccion;
 import com.local.exepciones.FirmaException;
 import static java.lang.Integer.parseInt;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 public class ClienteView extends javax.swing.JFrame {
 
     private Nodo nodo;
-    
+    private Timer timer;
+
     public ClienteView(Nodo nodo) {
         initComponents();
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         this.nodo = nodo;
-        
-        setTitle(""+nodo.getId());
+
+        setTitle("" + nodo.getId());
         cartera.setText(nodo.getDireccionCartera());
-        
-        initDataNodo();
+
+        buscarData();
+    }
+    
+    public void detenerTimer() {
+        if (timer != null) {
+            timer.cancel();
+        }
     }
 
     /**
@@ -32,7 +44,7 @@ public class ClienteView extends javax.swing.JFrame {
     private void initComponents() {
 
         panelContenedor = new javax.swing.JPanel();
-        jButton3 = new javax.swing.JButton();
+        btnConsultarCadena = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         cartera = new javax.swing.JTextField();
         fondos = new javax.swing.JLabel();
@@ -50,15 +62,15 @@ public class ClienteView extends javax.swing.JFrame {
 
         panelContenedor.setBackground(new java.awt.Color(255, 204, 51));
 
-        jButton3.setBackground(new java.awt.Color(255, 153, 51));
-        jButton3.setFont(new java.awt.Font("sansserif", 1, 13)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(0, 0, 0));
-        jButton3.setText("Consultar Cadena");
-        jButton3.setBorderPainted(false);
-        jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnConsultarCadena.setBackground(new java.awt.Color(255, 153, 51));
+        btnConsultarCadena.setFont(new java.awt.Font("sansserif", 1, 13)); // NOI18N
+        btnConsultarCadena.setForeground(new java.awt.Color(0, 0, 0));
+        btnConsultarCadena.setText("Consultar Cadena");
+        btnConsultarCadena.setBorderPainted(false);
+        btnConsultarCadena.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnConsultarCadena.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnConsultarCadenaActionPerformed(evt);
             }
         });
 
@@ -82,14 +94,14 @@ public class ClienteView extends javax.swing.JFrame {
         fondos.setFont(new java.awt.Font("sansserif", 0, 18)); // NOI18N
         fondos.setForeground(new java.awt.Color(0, 0, 0));
         fondos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        fondos.setText("12321312.231230");
+        fondos.setText("0.00");
 
         jLabel7.setFont(new java.awt.Font("DejaVu Sans Mono", 0, 12)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Historial de transacciones");
 
         PanelHistorialTrans.setBackground(new java.awt.Color(204, 204, 204));
-        PanelHistorialTrans.setLayout(new java.awt.GridBagLayout());
+        PanelHistorialTrans.setLayout(new javax.swing.BoxLayout(PanelHistorialTrans, javax.swing.BoxLayout.Y_AXIS));
         jScrollPane2.setViewportView(PanelHistorialTrans);
 
         btnTransaccion.setBackground(new java.awt.Color(255, 153, 51));
@@ -106,7 +118,7 @@ public class ClienteView extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("sansserif", 1, 24)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel3.setText("Cartera");
+        jLabel3.setText("Cliente");
 
         monto.setBackground(new java.awt.Color(255, 255, 255));
         monto.setForeground(new java.awt.Color(0, 0, 0));
@@ -158,19 +170,18 @@ public class ClienteView extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(monto, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelContenedorLayout.createSequentialGroup()
-                        .addGroup(panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelContenedorLayout.createSequentialGroup()
-                                .addGap(94, 94, 94)
-                                .addComponent(jButton3))
-                            .addGroup(panelContenedorLayout.createSequentialGroup()
-                                .addGap(98, 98, 98)
-                                .addComponent(jLabel7)))
+                        .addGap(98, 98, 98)
+                        .addComponent(jLabel7)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelContenedorLayout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(cartera, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(17, 17, 17)))
                 .addContainerGap())
+            .addGroup(panelContenedorLayout.createSequentialGroup()
+                .addGap(108, 108, 108)
+                .addComponent(btnConsultarCadena)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelContenedorLayout.setVerticalGroup(
             panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -200,7 +211,7 @@ public class ClienteView extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(33, 33, 33)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnConsultarCadena, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(58, Short.MAX_VALUE))
         );
 
@@ -218,21 +229,23 @@ public class ClienteView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void btnConsultarCadenaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarCadenaActionPerformed
+
+        CadenaView cadenaV = new CadenaView(nodo.getCadena());
+        cadenaV.setVisible(true);
+    }//GEN-LAST:event_btnConsultarCadenaActionPerformed
 
     private void carteraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_carteraActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_carteraActionPerformed
 
     private void btnTransaccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransaccionActionPerformed
-       
-       String receptor = destinatario.getText();
-       String cantidad = monto.getText();
+
+        String receptor = destinatario.getText();
+        String cantidad = monto.getText();
 
         if (!receptor.isEmpty() && !cantidad.isEmpty()) {
-            
+
             try {
                 float cantidadInt = Float.parseFloat(cantidad);
                 String msg = Sistema.getInstancia().propagarTransaccion(nodo.crearTransaccion(receptor, cantidadInt));
@@ -244,32 +257,94 @@ public class ClienteView extends javax.swing.JFrame {
 
             } catch (NumberFormatException ex) {
                 mensajeEmergente("El monto debe ser numérico");
-            } catch (FirmaException ex) {      
+            } catch (FirmaException ex) {
             }
-            
+
         } else {
             mensajeEmergente("Llene todos los campos");
         }
-        
+
     }//GEN-LAST:event_btnTransaccionActionPerformed
-    
-    private void initDataNodo() {
-        
-        
+
+    private void buscarData() {
+        timer = new Timer();
+        ArrayList<Transaccion> transPropias = new ArrayList<>();
+        ArrayList<Transaccion> transAmi = new ArrayList<>();
+        String carteraDir = cartera.getText();
+
+        TimerTask task = new TimerTask() {
+            public void run() {
+                String head = nodo.getCadena().obtenerHeadMayor();
+                Bloque bloque = nodo.getCadena().obtenerBloque(head);
+                transPropias.clear();
+                transAmi.clear();
+                
+                if (bloque != null) {
+                    while (true) {
+                        
+                        for (Transaccion transaccion : bloque.getTransacciones()) {
+                            if (carteraDir.equals(transaccion.getEmisor())) {
+                                transPropias.add(transaccion);
+                            } else if (carteraDir.equals(transaccion.getReceptor())){
+                                transAmi.add(transaccion);
+                            }
+                        }
+
+                        bloque = nodo.getCadena().obtenerBloque(bloque.getHashAnterior());
+                        if (bloque == null) {
+                            break;
+                        }
+                    }
+                    
+                    if (!transPropias.isEmpty() || !transAmi.isEmpty()) {
+                        mostrarData(transPropias, transAmi);
+                    }
+                }
+
+                System.out.println("Buscando data cliente: " + nodo.getId());
+
+            }
+        };
+        timer.scheduleAtFixedRate(task, 0, 5000);
     }
-    
+
+    private void mostrarData(ArrayList<Transaccion> transPropias, ArrayList<Transaccion> transAmi) {
+        PanelHistorialTrans.removeAll();
+        float fondosCantidad = 0;
+        
+        for (Transaccion trans : transPropias) {
+            JLabel labelTrans = new JLabel(trans.getCantidad() + "$ -> " + trans.getReceptor());
+            PanelHistorialTrans.add(labelTrans);
+            fondosCantidad -= trans.getCantidad();
+        }
+        
+        
+        for (Transaccion trans : transAmi) {
+            JLabel labelTrans = new JLabel(trans.getCantidad() + "$ <- " + trans.getReceptor());
+            PanelHistorialTrans.add(labelTrans);
+            fondosCantidad += trans.getCantidad();
+        }
+
+        fondos.setText(""+fondosCantidad);
+        fondos.revalidate();
+        fondos.repaint();
+        PanelHistorialTrans.revalidate();
+        PanelHistorialTrans.repaint();
+
+    }
+
     private void mensajeEmergente(String mensaje) {
         JOptionPane.showMessageDialog(null, mensaje, "Mensaje", JOptionPane.INFORMATION_MESSAGE);
     }
- 
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PanelHistorialTrans;
+    private javax.swing.JButton btnConsultarCadena;
     private javax.swing.JButton btnTransaccion;
     private javax.swing.JTextField cartera;
     private javax.swing.JTextField destinatario;
     private javax.swing.JLabel fondos;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel7;

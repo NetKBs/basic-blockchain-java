@@ -69,7 +69,7 @@ public class Minero extends Nodo {
         
         if (bloque.esValido()) {
             transaccionesValidadas = new ArrayList<>();
-            Sistema.getInstancia().propagarBloqueYaMinado();
+            Sistema.getInstancia().propagarBloqueYaMinado(bloque);
             return bloque;
         } else {
             return null;
@@ -93,6 +93,10 @@ public class Minero extends Nodo {
         }
         
         return cadena.obtenerBloque(headMayor).getIndice();
+    }
+    
+    public ArrayList<Transaccion> transaccionesValidas() {
+        return transaccionesValidadas;
     }
 
 }

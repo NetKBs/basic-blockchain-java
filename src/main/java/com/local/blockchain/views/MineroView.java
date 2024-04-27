@@ -3,7 +3,11 @@ package com.local.blockchain.views;
 import com.local.blockchain.Bloque;
 import com.local.blockchain.Minero;
 import com.local.blockchain.Nodo;
+import com.local.blockchain.Sistema;
+import com.local.blockchain.Transaccion;
+import com.local.exepciones.FirmaException;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.JLabel;
@@ -13,13 +17,25 @@ public class MineroView extends javax.swing.JFrame {
 
     Minero minero;
     private boolean minando = false;
-    private Timer timer;
+    private Timer timerMinado;
+    private Timer timerData;
 
     public MineroView(Nodo nodo) {
         initComponents();
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         this.minero = (Minero) nodo;
         setTitle("" + minero.getId());
+        cartera.setText(minero.getDireccionCartera());
+        buscarData();
+    }
+    
+    public void detenerTimer() {
+        if (timerMinado != null) {
+            timerMinado.cancel();
+        }
+        if (timerData != null) {
+            timerData.cancel();
+        }
     }
 
     /**
@@ -34,11 +50,22 @@ public class MineroView extends javax.swing.JFrame {
         panelContenedor = new javax.swing.JPanel();
         btnMinar = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
-        jButton4 = new javax.swing.JButton();
+        consultarCadena = new javax.swing.JButton();
         estadoMinar = new javax.swing.JProgressBar();
         jScrollPane2 = new javax.swing.JScrollPane();
-        PanelHistorialTrans = new javax.swing.JPanel();
+        PanelHistorialLog = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
+        cartera = new javax.swing.JTextField();
+        destinatario = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        monto = new javax.swing.JTextField();
+        btnTransaccion = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        fondos = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        PanelHistorialTrans = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -60,15 +87,15 @@ public class MineroView extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("Minero");
 
-        jButton4.setBackground(new java.awt.Color(255, 153, 51));
-        jButton4.setFont(new java.awt.Font("sansserif", 1, 13)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(0, 0, 0));
-        jButton4.setText("Consultar Cadena");
-        jButton4.setBorderPainted(false);
-        jButton4.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        consultarCadena.setBackground(new java.awt.Color(255, 153, 51));
+        consultarCadena.setFont(new java.awt.Font("sansserif", 1, 13)); // NOI18N
+        consultarCadena.setForeground(new java.awt.Color(0, 0, 0));
+        consultarCadena.setText("Consultar Cadena");
+        consultarCadena.setBorderPainted(false);
+        consultarCadena.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        consultarCadena.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                consultarCadenaActionPerformed(evt);
             }
         });
 
@@ -78,56 +105,171 @@ public class MineroView extends javax.swing.JFrame {
         jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         jScrollPane2.setAutoscrolls(true);
 
-        PanelHistorialTrans.setBackground(new java.awt.Color(204, 204, 204));
-        PanelHistorialTrans.setLayout(new javax.swing.BoxLayout(PanelHistorialTrans, javax.swing.BoxLayout.Y_AXIS));
-        jScrollPane2.setViewportView(PanelHistorialTrans);
+        PanelHistorialLog.setBackground(new java.awt.Color(204, 204, 204));
+        PanelHistorialLog.setLayout(new javax.swing.BoxLayout(PanelHistorialLog, javax.swing.BoxLayout.Y_AXIS));
+        jScrollPane2.setViewportView(PanelHistorialLog);
 
         jLabel7.setFont(new java.awt.Font("DejaVu Sans Mono", 0, 12)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Consola (Log)");
+
+        cartera.setEditable(false);
+        cartera.setBackground(new java.awt.Color(255, 204, 51));
+        cartera.setForeground(new java.awt.Color(0, 0, 0));
+        cartera.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        cartera.setText("Eg13Hr8Rqd17o4QggkwhRA39NNE9KGcKznSkc2X1SnFu");
+        cartera.setBorder(null);
+        cartera.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                carteraActionPerformed(evt);
+            }
+        });
+
+        destinatario.setBackground(new java.awt.Color(255, 255, 255));
+        destinatario.setForeground(new java.awt.Color(0, 0, 0));
+
+        jLabel8.setFont(new java.awt.Font("DejaVu Sans Mono", 0, 12)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel8.setText("Cartera del destinatario");
+
+        jLabel9.setFont(new java.awt.Font("DejaVu Sans Mono", 0, 12)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel9.setText("Monto");
+
+        monto.setBackground(new java.awt.Color(255, 255, 255));
+        monto.setForeground(new java.awt.Color(0, 0, 0));
+
+        btnTransaccion.setBackground(new java.awt.Color(255, 153, 51));
+        btnTransaccion.setFont(new java.awt.Font("sansserif", 1, 13)); // NOI18N
+        btnTransaccion.setForeground(new java.awt.Color(0, 0, 0));
+        btnTransaccion.setText("Hacer Transaccion");
+        btnTransaccion.setBorderPainted(false);
+        btnTransaccion.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnTransaccion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTransaccionActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel2.setText("Fondos");
+
+        fondos.setBackground(new java.awt.Color(250, 250, 250));
+        fondos.setFont(new java.awt.Font("sansserif", 0, 18)); // NOI18N
+        fondos.setForeground(new java.awt.Color(0, 0, 0));
+        fondos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        fondos.setText("0.00");
+
+        jLabel10.setFont(new java.awt.Font("DejaVu Sans Mono", 0, 12)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel10.setText("Historial de transacciones");
+
+        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        jScrollPane3.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+        PanelHistorialTrans.setBackground(new java.awt.Color(204, 204, 204));
+        PanelHistorialTrans.setLayout(new javax.swing.BoxLayout(PanelHistorialTrans, javax.swing.BoxLayout.Y_AXIS));
+        jScrollPane3.setViewportView(PanelHistorialTrans);
 
         javax.swing.GroupLayout panelContenedorLayout = new javax.swing.GroupLayout(panelContenedor);
         panelContenedor.setLayout(panelContenedorLayout);
         panelContenedorLayout.setHorizontalGroup(
             panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelContenedorLayout.createSequentialGroup()
-                .addGap(135, 135, 135)
-                .addComponent(jLabel3)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(panelContenedorLayout.createSequentialGroup()
                 .addGroup(panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelContenedorLayout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelContenedorLayout.createSequentialGroup()
-                        .addGap(100, 100, 100)
+                        .addContainerGap()
                         .addGroup(panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnMinar, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton4)))
+                            .addGroup(panelContenedorLayout.createSequentialGroup()
+                                .addComponent(btnMinar, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(consultarCadena))
+                            .addGroup(panelContenedorLayout.createSequentialGroup()
+                                .addComponent(cartera, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 6, Short.MAX_VALUE))
+                            .addGroup(panelContenedorLayout.createSequentialGroup()
+                                .addGroup(panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(panelContenedorLayout.createSequentialGroup()
+                                        .addComponent(jLabel8)
+                                        .addGap(86, 86, 86)
+                                        .addComponent(jLabel9))
+                                    .addGroup(panelContenedorLayout.createSequentialGroup()
+                                        .addGap(101, 101, 101)
+                                        .addComponent(btnTransaccion)))
+                                .addGap(36, 36, 36))
+                            .addGroup(panelContenedorLayout.createSequentialGroup()
+                                .addComponent(destinatario, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(monto, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(panelContenedorLayout.createSequentialGroup()
-                        .addGap(119, 119, 119)
-                        .addComponent(estadoMinar, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelContenedorLayout.createSequentialGroup()
-                        .addGap(131, 131, 131)
-                        .addComponent(jLabel7)))
-                .addContainerGap(33, Short.MAX_VALUE))
+                        .addGroup(panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(panelContenedorLayout.createSequentialGroup()
+                                    .addGap(135, 135, 135)
+                                    .addComponent(jLabel3))
+                                .addGroup(panelContenedorLayout.createSequentialGroup()
+                                    .addGap(74, 74, 74)
+                                    .addGroup(panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(fondos, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(panelContenedorLayout.createSequentialGroup()
+                                            .addGap(70, 70, 70)
+                                            .addComponent(jLabel2))))
+                                .addGroup(panelContenedorLayout.createSequentialGroup()
+                                    .addGap(119, 119, 119)
+                                    .addComponent(estadoMinar, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(panelContenedorLayout.createSequentialGroup()
+                                    .addGap(90, 90, 90)
+                                    .addComponent(jLabel10))
+                                .addGroup(panelContenedorLayout.createSequentialGroup()
+                                    .addGap(26, 26, 26)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+            .addGroup(panelContenedorLayout.createSequentialGroup()
+                .addGap(130, 130, 130)
+                .addComponent(jLabel7)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelContenedorLayout.setVerticalGroup(
             panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelContenedorLayout.createSequentialGroup()
                 .addGap(6, 6, 6)
                 .addComponent(jLabel3)
-                .addGap(36, 36, 36)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnMinar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(estadoMinar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(17, 17, 17))
+                .addComponent(cartera, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelContenedorLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(fondos, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                .addGroup(panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(5, 5, 5)
+                .addGroup(panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(destinatario, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(monto, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnTransaccion, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnMinar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(consultarCadena, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(estadoMinar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel7)
+                .addGap(2, 2, 2)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(4, 4, 4))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -148,8 +290,8 @@ public class MineroView extends javax.swing.JFrame {
         if (minando) {
             estadoMinar.setBackground(Color.RED);
             minando = false;
-            if (timer != null) {
-                timer.cancel();
+            if (timerMinado != null) {
+                timerMinado.cancel();
                 logEnConsola("Minado detenido...");
             }
         } else {
@@ -162,12 +304,43 @@ public class MineroView extends javax.swing.JFrame {
         estadoMinar.repaint();
     }//GEN-LAST:event_btnMinarActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void consultarCadenaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consultarCadenaActionPerformed
+        CadenaView cadenaV = new CadenaView(minero.getCadena());
+        cadenaV.setVisible(true);
+    }//GEN-LAST:event_consultarCadenaActionPerformed
+
+    private void carteraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_carteraActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_carteraActionPerformed
+
+    private void btnTransaccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransaccionActionPerformed
+
+        String receptor = destinatario.getText();
+        String cantidad = monto.getText();
+
+        if (!receptor.isEmpty() && !cantidad.isEmpty()) {
+
+            try {
+                float cantidadInt = Float.parseFloat(cantidad);
+                String msg = Sistema.getInstancia().propagarTransaccion(minero.crearTransaccion(receptor, cantidadInt));
+                if (!msg.isEmpty()) {
+                    mensajeEmergente(msg);
+                } else {
+                    mensajeEmergente("Transacción verificada y en proceso");
+                }
+
+            } catch (NumberFormatException ex) {
+                mensajeEmergente("El monto debe ser numérico");
+            } catch (FirmaException ex) {
+            }
+
+        } else {
+            mensajeEmergente("Llene todos los campos");
+        }
+    }//GEN-LAST:event_btnTransaccionActionPerformed
 
     private void empezarMinado() {
-        timer = new Timer();
+        timerMinado = new Timer();
         logEnConsola("Empezando a minar...");
         
         TimerTask task = new TimerTask() {
@@ -188,24 +361,106 @@ public class MineroView extends javax.swing.JFrame {
                 }
             }
         };
-        timer.scheduleAtFixedRate(task, 0, 5000);
+        timerMinado.scheduleAtFixedRate(task, 0, 5000);
     }
 
     private void logEnConsola(String mensaje) {
         JLabel label = new JLabel(mensaje);
-        PanelHistorialTrans.add(label);
+        PanelHistorialLog.add(label);
+        PanelHistorialLog.revalidate();
+        PanelHistorialLog.repaint();
+    }
+    
+    private void mensajeEmergente(String mensaje) {
+        JOptionPane.showMessageDialog(null, mensaje, "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private void buscarData() {
+        timerData = new Timer();
+        ArrayList<Transaccion> transPropias = new ArrayList<>();
+        ArrayList<Transaccion> transAmi = new ArrayList<>();
+        String carteraDir = cartera.getText();
+
+        TimerTask task = new TimerTask() {
+            public void run() {
+                String head = minero.getCadena().obtenerHeadMayor();
+                Bloque bloque = minero.getCadena().obtenerBloque(head);
+                transPropias.clear();
+                transAmi.clear();
+                
+                if (bloque != null) {
+                    while (true) {
+                        
+                        for (Transaccion transaccion : bloque.getTransacciones()) {
+                            if (carteraDir.equals(transaccion.getEmisor())) {
+                                transPropias.add(transaccion);
+                            } else if (carteraDir.equals(transaccion.getReceptor())){
+                                transAmi.add(transaccion);
+                            }
+                        }
+
+                        bloque = minero.getCadena().obtenerBloque(bloque.getHashAnterior());
+                        if (bloque == null) {
+                            break;
+                        }
+                    }
+                    
+                    if (!transPropias.isEmpty() || !transAmi.isEmpty()) {
+                        mostrarData(transPropias, transAmi);
+                    }
+                }
+
+                System.out.println("Buscando data minero: " + minero.getId());
+
+            }
+        };
+        timerData.scheduleAtFixedRate(task, 0, 5000);
+    }
+
+    private void mostrarData(ArrayList<Transaccion> transPropias, ArrayList<Transaccion> transAmi) {
+        PanelHistorialTrans.removeAll();
+        float fondosCantidad = 0;
+        
+        for (Transaccion trans : transPropias) {
+            JLabel labelTrans = new JLabel(trans.getCantidad() + "$ -> " + trans.getReceptor());
+            PanelHistorialTrans.add(labelTrans);
+            fondosCantidad -= trans.getCantidad();
+        }
+        
+        
+        for (Transaccion trans : transAmi) {
+            JLabel labelTrans = new JLabel(trans.getCantidad() + "$ <- " + trans.getReceptor());
+            PanelHistorialTrans.add(labelTrans);
+            fondosCantidad += trans.getCantidad();
+        }
+
+        fondos.setText(""+fondosCantidad);
+        fondos.revalidate();
+        fondos.repaint();
         PanelHistorialTrans.revalidate();
         PanelHistorialTrans.repaint();
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel PanelHistorialLog;
     private javax.swing.JPanel PanelHistorialTrans;
     private javax.swing.JButton btnMinar;
+    private javax.swing.JButton btnTransaccion;
+    private javax.swing.JTextField cartera;
+    private javax.swing.JButton consultarCadena;
+    private javax.swing.JTextField destinatario;
     private javax.swing.JProgressBar estadoMinar;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JLabel fondos;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTextField monto;
     private javax.swing.JPanel panelContenedor;
     // End of variables declaration//GEN-END:variables
 }
