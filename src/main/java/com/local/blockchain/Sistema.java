@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Sistema {
     
     private static Sistema instancia;
+    private int contadorNodo = 0;
     private ArrayList<Nodo> redNodos = new ArrayList<>();
     
     private Sistema(){}
@@ -16,28 +17,43 @@ public class Sistema {
         return instancia;
     }
     
-    public void propagarTransaccion(Transaccion transaccion) {
+    public void propagarBloqueYaMinado() {
+        for (Nodo nodo: redNodos) {
+            if (nodo instanceof Minero) {
+                Minero minero = (Minero) nodo;
+                minero.bloqueYaMinado();
+            }
+        }
+    }
+    
+    public String propagarTransaccion(Transaccion transaccion) {
         
         boolean revisado = false;
+        
+        
 
         for (Nodo nodo: redNodos) {
             if (nodo instanceof Minero) {
                 revisado = true;
                 Minero minero = (Minero) nodo;
-                boolean respuesta = minero.validarTransaccion(transaccion);
-                if (respuesta) {
-                    System.out.println("Nodo " +  minero.getId() + " aprueba la transaccion");
+                String respuesta = minero.validarTransaccion(transaccion);
+                
+                // TODO: VERIFICAR FONDOS
+                if (respuesta.isEmpty()) {
+                    System.out.println("Nodo Minero #" +  minero.getId() + " aprueba la transaccion");
                 } else {
-                   System.out.println("Nodo " +  minero.getId() + " desaprueba la transaccion");
+                   return "Nodo Minero #" +  minero.getId() + " desaprueba la transaccion:\n"+respuesta;
                 }
             } 
         }
         
         if (!revisado) {
-            System.out.println("No existen mineros para validar las transacciones");
+            return "No existen mineros para validar las transacciones";
         }
         
-        // TODO: Luego de validarlo todo dar las transaccion como valida a todos los mineros
+        // TODO: PASAR TRANSACCIÓN A LOS MINEROS PARA PODER MINAR LUEGO
+    
+        return "";
     }
     
     // TODO: verificar si la instancia de nodo ya está en la red conectada
@@ -47,15 +63,41 @@ public class Sistema {
         System.out.println("Nodo conectado");
     }
     
-    public void crearConectarNodoRed(boolean minero) {
+    public Nodo crearConectarNodoRed(boolean minero) {
+        Nodo nodo;
         if (minero) {
-            redNodos.add(new Minero());
+            nodo = new Minero();
         } else {
-            redNodos.add(new Nodo());
+            nodo = new Nodo();
         }
-        System.out.println("Nodo creado y conectado");
+        
+        nodo.setId(generarNuevoIdUnico());
+        redNodos.add(nodo);
+        System.out.println("Nodo " + nodo.getId() + " creado y conectado");
+        return nodo;
     }
     
-  
+    private int generarNuevoIdUnico() {
+        return ++contadorNodo;
+    }
     
+  public ArrayList<Nodo> getRedNodos() {
+      return redNodos;
+  }
+  
+  public void imprimir() {
+      for (Nodo nodo: redNodos) {
+        System.out.println(nodo.getId());        
+
+      }
+  }
+ 
+  public Nodo getNodoById(int id) {
+      for (Nodo nodo : redNodos) {
+          if (nodo.getId() == id) { 
+            return nodo;
+        }
+    }
+    return null;
+  }
 }

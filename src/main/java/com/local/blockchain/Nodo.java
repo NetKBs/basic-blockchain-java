@@ -7,19 +7,22 @@ import java.security.PrivateKey;
 
 public class Nodo {
 
-    protected static int id;
+    protected int id;
     protected Cartera cartera;
     protected Cadena cadena;
     private Sistema redP2P = null; // acceso a la red de nodos
 
     public Nodo() {
-        this.id += 1;
         this.cartera = new Cartera();
         this.cadena = new Cadena();
     }
 
-    public static int getId() {
+    public int getId() {
         return id;
+    }
+    
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void conectarseRedP2P() {

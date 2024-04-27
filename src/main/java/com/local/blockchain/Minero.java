@@ -4,21 +4,38 @@ import java.time.Instant;
 import java.util.ArrayList;
 
 public class Minero extends Nodo {
-    private final ArrayList<Transaccion> transaccionesValidadas = new ArrayList<>();
+    private ArrayList<Transaccion> transaccionesValidadas = new ArrayList<>();
     private final Integer transaccionesPorBloque = 1;
 
     public Minero (){
         super();
     }
     
-    public Boolean validarTransaccion(Transaccion transaccion) {
-        if (!GestorFirmas.verificarFirma(transaccion)
-                || !this.verificarFondos(transaccion)) {
-            return false;
+    public String validarTransaccion(Transaccion transaccion) {
+     
+        if (!this.verificarFondos(transaccion)) {
+            return "Fondos insuficientes";
+        } else if (!this.verificarDireccion(transaccion)) {
+            return "Direccion de cartera incorrecta";
+        } else if (!GestorFirmas.verificarFirma(transaccion)) {
+            return "Error en la firma digital";
         }
 
         transaccionesValidadas.add(transaccion);
-        return true;
+        return "";
+    }
+    
+    private boolean verificarDireccion(Transaccion transaccion) {
+        String direccion = transaccion.getReceptor();
+        
+        for (Nodo nodo : Sistema.getInstancia().getRedNodos()) {
+            if (!(nodo instanceof Minero)) {
+                if (direccion.equals(nodo.getDireccionCartera())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private Boolean verificarFondos(Transaccion transaccion) {
@@ -37,14 +54,27 @@ public class Minero extends Nodo {
 
         return nuevoBloque;
     }
+    
+    public void bloqueYaMinado() {
+        transaccionesValidadas = new ArrayList<>();
+    }
 
-    public void minarBloque(Bloque bloque) {
+    public Bloque minarBloque(Bloque bloque) {
         int i = 0;
 
-        while (!bloque.esValido()) {
+        while (!bloque.esValido() && deberiaCrearBloque()) {
             bloque.crearHash(i);
             i++;
         }
+        
+        if (bloque.esValido()) {
+            transaccionesValidadas = new ArrayList<>();
+            Sistema.getInstancia().propagarBloqueYaMinado();
+            return bloque;
+        } else {
+            return null;
+        }
+        
     }
 
     public Boolean deberiaCrearBloque() {
