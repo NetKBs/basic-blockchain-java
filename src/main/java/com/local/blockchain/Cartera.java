@@ -20,7 +20,7 @@ public class Cartera {
         }
     }
 
-    public void generarClaves() {
+    private void generarClaves() {
         KeyPairGenerator keyPairGenerator = null;
 
         try {
@@ -38,14 +38,10 @@ public class Cartera {
         }
     }
 
-    public void generarDireccion() throws Exception {
+    private void generarDireccion() throws Exception {
         byte[] pkBytes = clavePublica.getEncoded();
         byte[] hash = DigestUtils.sha256(pkBytes);
         this.direccion = Encoder.encodeToBase58(hash);
-    }
-
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
     }
 
     public String getDireccion() {

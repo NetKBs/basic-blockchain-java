@@ -1,11 +1,13 @@
 package com.local.blockchain;
 
 import java.util.HashMap;
+import java.util.HashSet;
+
 
 public class Cadena {
 
     private HashMap<String, Bloque> bloques = new HashMap<>();
-    private HashMap<String, Integer> heads = new HashMap<>();
+    private HashSet<String> heads = new HashSet<>();
     private String headMayor = null;
 
     public Cadena() {
@@ -14,15 +16,15 @@ public class Cadena {
     public void agregarBloque(Bloque bloque) {
         String anterior = bloque.getHashAnterior();
         String hash = bloque.getHash();
-        
-        if(bloques.containsKey(hash)){
+
+        if (bloques.containsKey(hash)) {
             return;
         }
-        
+
         Integer indice = bloque.getIndice();
 
         if (anterior == null && indice == 0) {
-            heads.put(hash, indice);
+            heads.add(hash);
             bloques.put(hash, bloque);
             actualizarHeadMayor(bloque);
             return;
@@ -35,11 +37,11 @@ public class Cadena {
             return;
         }
 
-        if (heads.containsKey(anterior)) {
+        if (heads.contains(anterior)) {
             heads.remove(anterior);
         }
 
-        heads.put(hash, indice);
+        heads.add(hash);
         bloques.put(hash, bloque);
 
         actualizarHeadMayor(bloque);
@@ -64,8 +66,8 @@ public class Cadena {
         return bloques.get(hash);
     }
 
-    public String[] obtenerHeads() {
-        return (String[]) heads.keySet().toArray();
+    public String[] obtenerHeads() {  
+        return heads.toArray(new String[0]);
     }
 
     public String obtenerHeadMayor() {
