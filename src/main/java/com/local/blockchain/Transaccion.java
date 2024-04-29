@@ -1,9 +1,6 @@
 package com.local.blockchain;
 
-import com.local.exepciones.FirmaException;
-import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.Signature;
 import java.time.Instant;
 
 public class Transaccion {
